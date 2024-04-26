@@ -12,7 +12,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
 
-builder.Services.AddAutoMapper(typeof(MappingConfig));
+IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+builder.Services.AddSingleton(mapper);
+
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddControllers();
