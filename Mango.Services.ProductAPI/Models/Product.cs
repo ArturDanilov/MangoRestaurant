@@ -10,7 +10,7 @@ namespace Mango.Services.ProductAPI.Models
         [Required]
         public string Name { get; set; }
         
-        [Range (1, int.MaxValue)]
+        [Range (1, 1000)]
         
         public double Price { get; set; }
         

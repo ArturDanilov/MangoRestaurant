@@ -7,12 +7,12 @@ namespace Mango.Web.Services
 {
     public class BaseService : IBaseService
     {
-        public ResponseDto ResponseModel { get; set; }
+        public ResponseDto responseModel { get; set; }
         public IHttpClientFactory httpClient { get; set; }
 
         public BaseService(IHttpClientFactory httpClient)
         {
-            this.ResponseModel = new ResponseDto();
+            this.responseModel = new ResponseDto();
             this.httpClient = httpClient;
         }
 
@@ -47,7 +47,6 @@ namespace Mango.Web.Services
                         message.Method = HttpMethod.Get;
                         break;
                 }
-
                 apiResponse = await client.SendAsync(message);
 
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
@@ -71,7 +70,7 @@ namespace Mango.Web.Services
         }
         public void Dispose()
         {
-            throw new NotImplementedException();
+            GC.SuppressFinalize(true);
         }
     }
 }

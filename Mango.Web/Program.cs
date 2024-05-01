@@ -1,3 +1,4 @@
+using Mango.Web;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
 
@@ -7,6 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<IProductService, ProductService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+
+// Загрузка конфигурации из appsettings.json
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+// Получение значения из конфигурации
+var productApiBase = configuration["ServiceUrls:ProductAPI"];
+// Использование полученного значения
+SD.ProductAPIBase = productApiBase;
 
 var app = builder.Build();
 

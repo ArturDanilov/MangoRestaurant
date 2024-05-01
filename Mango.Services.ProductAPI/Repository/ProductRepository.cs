@@ -60,7 +60,7 @@ namespace Mango.Services.ProductAPI.Repository
 
         public async Task<IEnumerable<ProductDto>> GetProducts()
         {
-            IEnumerable <Product> productList = await _db.Products.ToListAsync();
+            List<Product> productList = await _db.Products.ToListAsync();
             return _mapper.Map<List<ProductDto>>(productList);
         }
     }
