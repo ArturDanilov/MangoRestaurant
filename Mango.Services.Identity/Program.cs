@@ -13,20 +13,22 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
     });
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-builder.Services.AddIdentityServer(options =>
-    {
-        options.Events.RaiseErrorEvents = true;
-        options.Events.RaiseInformationEvents = true;
-        options.Events.RaiseFailureEvents = true;
-        options.Events.RaiseSuccessEvents = true;
-        options.EmitStaticAudienceClaim = true;
-    }).AddInMemoryIdentityResources(SD.IdentityResources)
-    .AddInMemoryApiScopes(SD.ApiScopes)
-    .AddInMemoryClients(SD.Clients)
-    .AddAspNetIdentity<ApplicationUser>();
+
+var identityServerBuilder = builder.Services.AddIdentityServer(options =>
+{
+    options.Events.RaiseErrorEvents = true;
+    options.Events.RaiseInformationEvents = true;
+    options.Events.RaiseFailureEvents = true;
+    options.Events.RaiseSuccessEvents = true;
+    options.EmitStaticAudienceClaim = true;
+}).AddInMemoryIdentityResources(SD.IdentityResources)
+.AddInMemoryApiScopes(SD.ApiScopes)
+.AddInMemoryClients(SD.Clients)
+.AddAspNetIdentity<ApplicationUser>();
+
+identityServerBuilder.AddDeveloperSigningCredential();
 
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
-//builder.AddDeveloperSigningCredential(); //TODO???
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

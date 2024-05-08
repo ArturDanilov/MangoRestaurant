@@ -1,6 +1,7 @@
 using Mango.Web;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,14 +10,34 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<IProductService, ProductService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
-// Загрузка конфигурации из appsettings.json
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
-// Получение значения из конфигурации
+
 var productApiBase = configuration["ServiceUrls:ProductAPI"];
-// Использование полученного значения
+
 SD.ProductAPIBase = productApiBase;
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultChallengeScheme = "oidc";
+})
+    .AddCookie("Cookies", c => c.ExpireTimeSpan = TimeSpan.FromMinutes(10))
+    .AddOpenIdConnect("oidc", options =>
+    {
+        options.Authority = configuration["ServiceUrls:IdentityAPI"];
+        options.GetClaimsFromUserInfoEndpoint = true;
+        options.ClientId = "mango";
+        options.ClientSecret = "secret";
+        options.ResponseType = "code";
+        options.ClaimActions.MapJsonKey("role", "role", "role");
+        options.ClaimActions.MapJsonKey("sub", "sub", "sub");
+        options.TokenValidationParameters.NameClaimType = "name";
+        options.TokenValidationParameters.RoleClaimType = "role";
+        options.Scope.Add("mango");
+        options.SaveTokens = true;
+    });
 
 var app = builder.Build();
 
@@ -24,7 +45,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -33,6 +53,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
