@@ -17,13 +17,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
-
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
 builder.Services.AddControllers();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
     {
         options.Authority = "https://localhost:7245/";
         options.TokenValidationParameters = new TokenValidationParameters
@@ -70,7 +68,6 @@ builder.Services.AddSwaggerGen(c =>
             },
             new List<string>()
         }
-
     });
 });
 
