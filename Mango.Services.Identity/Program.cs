@@ -33,9 +33,6 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-//var dbInitializer = app.Services.GetRequiredService<IDbInitializer>();
-//dbInitializer.Initialize();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
